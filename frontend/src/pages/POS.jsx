@@ -5,7 +5,7 @@ import {
   LayoutGrid, LineChart, Moon, Sun, LogOut, 
   Search, RotateCcw, ShoppingCart, UserPlus, 
   Trash2, PauseCircle, QrCode, CheckSquare, 
-  Printer, X, Archive, CheckCircle, AlertCircle 
+  Printer, X, Archive, CheckCircle, AlertCircle, Plus
 } from 'lucide-react';
 
 export default function POS() {
