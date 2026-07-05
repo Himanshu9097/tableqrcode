@@ -6,7 +6,7 @@ import {
   Menu as MenuIcon, Users, UserCog, FileText, Settings as SettingsIcon,
   Moon, Sun, RefreshCw, Banknote, ShoppingCart, TableProperties, Flame,
   Monitor, Plus, Trash2, Edit, Check, X, ShieldAlert,
-  ArrowLeft, Download, Upload, CheckCircle, AlertCircle, Eye
+  ArrowLeft, Download, Upload, CheckCircle, AlertCircle, Eye, Search
 } from 'lucide-react';
 
 export default function Admin() {
@@ -1109,7 +1109,7 @@ export default function Admin() {
                         </div>
                         <div className="text-center space-y-1 text-slate-500">
                           <p className="text-[10px] font-bold">SCAN TO PLACE AN ORDER</p>
-                          <p className="text-[8px] italic">Powered by Swad Express Network</p>
+                          <p className="text-[8px] italic">Powered by {settings.restaurantName || 'QuickQR'}</p>
                         </div>
                       </div>
 
