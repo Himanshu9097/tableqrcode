@@ -4,7 +4,7 @@
   "description": "Multi-Tenant QR Table Ordering and POS Platform",
   "main": "backend/server.js",
   "scripts": {
-    "build": "npm run build --prefix frontend && cp -r frontend/dist ./dist",
+    "build": "npm run build --prefix frontend && rm -rf public && cp -r frontend/dist ./public",
     "install-all": "npm install && npm install --prefix backend && npm install --prefix frontend --legacy-peer-deps",
     "backend": "node backend/server.js",
     "backend:dev": "nodemon backend/server.js",
