@@ -578,7 +578,8 @@ export default function Admin() {
   };
 
   const getQRPosterUrl = () => {
-    const url = `http://localhost:5173/customer?restaurant=${restaurantId}&table=${activeQRTable}`;
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://table-qr-food.vercel.app';
+    const url = `${origin}/customer?restaurant=${restaurantId}&table=${activeQRTable}`;
     return `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
   };
 
