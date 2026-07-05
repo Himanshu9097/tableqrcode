@@ -692,7 +692,7 @@ export default function Customer() {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="E.g., Make it spicy, Jain food..." 
-                  className="w-full p-3 text-xs bg-slate-100 dark:bg-slate-900 border-none rounded-2xl focus:ring-2 focus:ring-blinkit-green focus:outline-none resize-none h-16 transition-all"
+                  className="w-full p-3 text-base bg-slate-100 dark:bg-slate-900 border-none rounded-2xl focus:ring-2 focus:ring-blinkit-green focus:outline-none resize-none h-16 transition-all"
                 ></textarea>
               </div>
 
@@ -701,16 +701,16 @@ export default function Customer() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[10px] font-semibold text-slate-400 mb-1">Your Name *</label>
-                    <input type="text" value={custName} onChange={(e) => setCustName(e.target.value)} placeholder="Aarav Sharma" className="w-full p-2.5 bg-slate-100 dark:bg-slate-900 border-none rounded-xl text-xs focus:ring-2 focus:ring-blinkit-green focus:outline-none text-slate-800 dark:text-slate-100" />
+                    <input type="text" value={custName} onChange={(e) => setCustName(e.target.value)} placeholder="Aarav Sharma" className="w-full p-2.5 bg-slate-100 dark:bg-slate-900 border-none rounded-xl text-base focus:ring-2 focus:ring-blinkit-green focus:outline-none text-slate-800 dark:text-slate-100" />
                   </div>
                   <div>
                     <label className="block text-[10px] font-semibold text-slate-400 mb-1">Mobile Number *</label>
-                    <input type="tel" value={custPhone} onChange={(e) => setCustPhone(e.target.value)} placeholder="9876543210" pattern="^[6-9]\d{9}$" maxLength={10} className="w-full p-2.5 bg-slate-100 dark:bg-slate-900 border-none rounded-xl text-xs focus:ring-2 focus:ring-blinkit-green focus:outline-none text-slate-800 dark:text-slate-100" />
+                    <input type="tel" value={custPhone} onChange={(e) => setCustPhone(e.target.value)} placeholder="9876543210" pattern="^[6-9]\d{9}$" maxLength={10} className="w-full p-2.5 bg-slate-100 dark:bg-slate-900 border-none rounded-xl text-base focus:ring-2 focus:ring-blinkit-green focus:outline-none text-slate-800 dark:text-slate-100" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-[10px] font-semibold text-slate-400 mb-1">Total Guests Sitting *</label>
-                  <input type="number" min="1" max="10" value={guestCount} onChange={(e) => setGuestCount(e.target.value)} className="w-full p-2.5 bg-slate-100 dark:bg-slate-900 border-none rounded-xl text-xs focus:ring-2 focus:ring-blinkit-green focus:outline-none text-slate-800 dark:text-slate-100" />
+                  <input type="number" min="1" max="10" value={guestCount} onChange={(e) => setGuestCount(e.target.value)} className="w-full p-2.5 bg-slate-100 dark:bg-slate-900 border-none rounded-xl text-base focus:ring-2 focus:ring-blinkit-green focus:outline-none text-slate-800 dark:text-slate-100" />
                 </div>
 
                 <div className="space-y-2">

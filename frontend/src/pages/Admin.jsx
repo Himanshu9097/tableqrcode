@@ -6,7 +6,7 @@ import {
   Menu as MenuIcon, Users, UserCog, FileText, Settings as SettingsIcon,
   Moon, Sun, RefreshCw, Banknote, ShoppingCart, TableProperties, Flame,
   Monitor, Plus, Trash2, Edit, Check, X, ShieldAlert,
-  ArrowLeft, Download, Upload, CheckCircle, AlertCircle, Eye, Search
+  ArrowLeft, Download, Upload, CheckCircle, AlertCircle, Eye, Search, Printer, Database
 } from 'lucide-react';
 
 export default function Admin() {
