@@ -1,0 +1,18 @@
+{
+  "name": "table-qr-food-platform",
+  "version": "1.0.0",
+  "description": "Multi-Tenant QR Table Ordering and POS Platform",
+  "main": "backend/server.js",
+  "scripts": {
+    "install-all": "npm install && npm install --prefix backend && npm install --prefix frontend --legacy-peer-deps",
+    "backend": "node backend/server.js",
+    "backend:dev": "nodemon backend/server.js",
+    "frontend": "npm run dev --prefix frontend",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "seed": "node backend/seed.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
