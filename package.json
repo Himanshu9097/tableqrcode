@@ -11,7 +11,12 @@
     "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
     "seed": "node backend/seed.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.1"
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }

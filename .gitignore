@@ -22,3 +22,4 @@ out/
 .gemini/
 .agents/
 *.log
+.vercel
