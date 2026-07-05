@@ -284,8 +284,7 @@ export default function Admin() {
     }
   };
 
-  const handleTableStatusRelease = async (tableId, currentStatus) => {
-    const targetStatus = currentStatus === 'Available' ? 'Reserved' : 'Available';
+  const handleTableStatusRelease = async (tableId, targetStatus) => {
     try {
       await api.put(`/tables/${tableId}/status?restaurantId=${restaurantId}`, { status: targetStatus });
       showToast(`Table status set to ${targetStatus}`);
@@ -1056,12 +1055,16 @@ export default function Admin() {
                           </div>
                           
                           <div className="flex gap-1.5 justify-center border-t border-slate-200/20 pt-2 text-[9px] font-bold">
-                            <button 
-                              onClick={() => handleTableStatusRelease(t.id, t.status)}
-                              className="px-2 py-1 bg-slate-100 dark:bg-slate-900 hover:bg-emerald-500 hover:text-white rounded-lg"
+                            <select 
+                              value={t.status}
+                              onChange={(e) => handleTableStatusRelease(t.id, e.target.value)}
+                              className="px-2 py-1 bg-slate-100 dark:bg-slate-900 border-none rounded-lg text-[9px] font-black focus:outline-none cursor-pointer text-slate-800 dark:text-slate-100"
                             >
-                              Toggle Status
-                            </button>
+                              <option value="Available">Available</option>
+                              <option value="Occupied">Occupied</option>
+                              <option value="Reserved">Reserved</option>
+                              <option value="Cleaning">Cleaning</option>
+                            </select>
                             <button 
                               onClick={() => setActiveQRTable(t.id)}
                               className="px-2 py-1 bg-slate-100 dark:bg-slate-900 hover:bg-emerald-500 hover:text-white rounded-lg text-emerald-500"
