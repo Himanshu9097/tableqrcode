@@ -54,7 +54,7 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const { restaurantName, restaurantLogo, address, phone, email, currency, currencyCode, taxRate, serviceChargeRate, openTime, closeTime, theme, invoicePrefix, invoiceFooter } = req.body;
+    const { restaurantName, restaurantLogo, address, phone, email, currency, currencyCode, taxRate, serviceChargeRate, openTime, closeTime, theme, invoicePrefix, invoiceFooter, backgroundColor } = req.body;
     
     let settings = await Settings.findOne({ restaurantId });
     if (!settings) {
@@ -75,6 +75,7 @@ router.post('/', async (req, res) => {
     if (theme !== undefined) settings.theme = theme;
     if (invoicePrefix !== undefined) settings.invoicePrefix = invoicePrefix;
     if (invoiceFooter !== undefined) settings.invoiceFooter = invoiceFooter;
+    if (backgroundColor !== undefined) settings.backgroundColor = backgroundColor;
 
     await settings.save();
     res.json(settings);

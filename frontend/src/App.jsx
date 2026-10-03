@@ -7,6 +7,7 @@ import SuperAdmin from './pages/SuperAdmin';
 import POS from './pages/POS';
 import Admin from './pages/Admin';
 import Customer from './pages/Customer';
+import Terms from './pages/Terms';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/pos" element={<POS />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/customer" element={<Customer />} />
+        <Route path="/terms" element={<Terms />} />
       </Routes>
     </Router>
   );

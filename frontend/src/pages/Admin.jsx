@@ -8,6 +8,7 @@ import {
   Monitor, Plus, Trash2, Edit, Check, X, ShieldAlert,
   ArrowLeft, Download, Upload, CheckCircle, AlertCircle, Eye, Search, Printer, Database
 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -69,6 +70,7 @@ export default function Admin() {
   const [setCloseTime, setSetCloseTime] = useState('23:00');
   const [setThemeMode, setSetThemeMode] = useState('dark');
   const [setInvoiceFooter, setSetInvoiceFooter] = useState('');
+  const [setBgColor, setSetBgColor] = useState('');
 
   // Form Fields - Category Create
   const [newCatName, setNewCatName] = useState('');
@@ -149,6 +151,7 @@ export default function Admin() {
       setSetCloseTime(settingsRes.data.closeTime || '23:00');
       setSetThemeMode(settingsRes.data.theme || 'dark');
       setSetInvoiceFooter(settingsRes.data.invoiceFooter || '');
+      setSetBgColor(settingsRes.data.backgroundColor || '');
 
       if (tablesRes.data.length > 0) {
         setActiveQRTable(tablesRes.data[0].id);
@@ -438,7 +441,8 @@ export default function Admin() {
       openTime: setOpenTime,
       closeTime: setCloseTime,
       theme: setThemeMode,
-      invoiceFooter: setInvoiceFooter
+      invoiceFooter: setInvoiceFooter,
+      backgroundColor: setBgColor
     };
 
     try {
@@ -583,7 +587,7 @@ export default function Admin() {
   };
 
   return (
-    <div className="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex transition-colors duration-300 font-sans w-full">
+    <div className="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex transition-colors duration-300 font-sans w-full" style={settings.backgroundColor ? { backgroundColor: settings.backgroundColor } : {}}>
       
       {/* Toast Notification */}
       {toast && (
@@ -618,6 +622,7 @@ export default function Admin() {
               { id: 'employees', label: 'Employees', icon: UserCog },
               { id: 'reports', label: 'Sales Reports', icon: FileText },
               { id: 'settings', label: 'Global Settings', icon: SettingsIcon },
+              { id: 'profile', label: 'My Profile', icon: UserCog },
             ].map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -637,13 +642,13 @@ export default function Admin() {
 
         <div className="p-4 border-t border-slate-200/50 dark:border-slate-800/40 space-y-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
+            <button onClick={() => switchTab('profile')} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity text-left">
               <img src={sessionUser?.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"} alt="Profile" className="w-9 h-9 rounded-full object-cover" />
               <div>
                 <p className="text-xs font-bold">{sessionUser?.name}</p>
                 <p className="text-[9px] text-slate-400">Admin Console</p>
               </div>
-            </div>
+            </button>
             
             <button onClick={toggleTheme} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-500 transition-all">
               {theme === 'dark' ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
@@ -692,6 +697,7 @@ export default function Admin() {
                     { id: 'employees', label: 'Employees', icon: UserCog },
                     { id: 'reports', label: 'Sales Reports', icon: FileText },
                     { id: 'settings', label: 'Global Settings', icon: SettingsIcon },
+                    { id: 'profile', label: 'My Profile', icon: UserCog },
                   ].map(tab => {
                     const Icon = tab.icon;
                     return (
@@ -774,45 +780,77 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* Simple graphical list representation (Sales charts) */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="glass-card p-6 rounded-3xl lg:col-span-2 space-y-4 bg-white dark:bg-slate-900 shadow-sm border border-slate-200/40 dark:border-slate-800/40">
-                  <h3 className="font-extrabold text-base">Weekly Order Activities</h3>
-                  <div className="space-y-3 pt-2">
-                    {/* Render weekly aggregated values in a clean bar layout */}
-                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => {
-                      const heights = [40, 20, 60, 80, 50, 95, 75];
-                      return (
-                        <div key={day} className="flex items-center gap-4 text-xs font-semibold">
-                          <span className="w-8 text-slate-400">{day}</span>
-                          <div className="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-3.5 overflow-hidden">
-                            <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${heights[i]}%` }}></div>
-                          </div>
-                          <span className="w-8 text-right text-slate-500">{heights[i]}%</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+              {/* Dynamic Analytics Charts */}
+              {(() => {
+                const ordersPerHour = new Array(24).fill(0);
+                const tableUsage = {};
+                
+                completedOrders.forEach(o => {
+                  const hour = new Date(o.createdAt).getHours();
+                  ordersPerHour[hour]++;
+                  if (o.tableId) {
+                    const tid = o.tableId.replace('tab_', '');
+                    tableUsage[tid] = (tableUsage[tid] || 0) + 1;
+                  }
+                });
+                
+                const peakHours = [];
+                for (let i = 0; i < 24; i++) {
+                  if (ordersPerHour[i] > 0) {
+                    peakHours.push({ hour: i, count: ordersPerHour[i] });
+                  }
+                }
+                const topTables = Object.entries(tableUsage).sort((a,b) => b[1] - a[1]).slice(0, 5);
+                const maxOrdersPerHour = Math.max(...ordersPerHour, 1);
+                const maxTableOrders = topTables.length > 0 ? Math.max(...topTables.map(t => t[1])) : 1;
 
-                <div className="glass-card p-6 rounded-3xl space-y-4 bg-white dark:bg-slate-900 shadow-sm border border-slate-200/40 dark:border-slate-800/40">
-                  <h3 className="font-extrabold text-base">Top Selling Categories</h3>
-                  <div className="space-y-4.5 pt-2 text-xs font-bold text-slate-500">
-                    {categories.map((cat, idx) => {
-                      const pct = [55, 30, 10, 5];
-                      return (
-                        <div key={cat.id} className="flex justify-between items-center">
-                          <span className="flex items-center gap-1.5 text-slate-800 dark:text-slate-200">
-                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                            {cat.name}
-                          </span>
-                          <span>{pct[idx] || 5}% volume</span>
-                        </div>
-                      );
-                    })}
+                const peakHoursData = peakHours.map(ph => ({
+                  name: ph.hour < 12 ? (ph.hour === 0 ? '12 AM' : `${ph.hour} AM`) : (ph.hour === 12 ? '12 PM' : `${ph.hour - 12} PM`),
+                  orders: ph.count
+                }));
+                const topTablesData = topTables.map(t => ({
+                  name: `Table ${t[0]}`,
+                  orders: t[1]
+                }));
+
+                return (
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="glass-card p-6 rounded-3xl lg:col-span-2 space-y-4 bg-white dark:bg-slate-900 shadow-sm border border-slate-200/40 dark:border-slate-800/40">
+                      <h3 className="font-extrabold text-base">Peak Order Times</h3>
+                      <div className="pt-2 h-64 w-full">
+                        {peakHoursData.length > 0 ? (
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={peakHoursData}>
+                              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" />
+                              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+                              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+                              <Tooltip cursor={{ fill: '#334155', opacity: 0.2 }} contentStyle={{ borderRadius: '12px', border: 'none', backgroundColor: '#1e293b', color: '#f8fafc', fontWeight: 'bold' }} />
+                              <Bar dataKey="orders" fill="#10b981" radius={[4, 4, 0, 0]} barSize={32} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        ) : <p className="text-xs text-slate-400">No order data yet.</p>}
+                      </div>
+                    </div>
+
+                    <div className="glass-card p-6 rounded-3xl space-y-4 bg-white dark:bg-slate-900 shadow-sm border border-slate-200/40 dark:border-slate-800/40">
+                      <h3 className="font-extrabold text-base">Most Used Tables</h3>
+                      <div className="pt-2 h-64 w-full text-xs">
+                        {topTablesData.length > 0 ? (
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={topTablesData} layout="vertical" margin={{ top: 0, right: 20, left: 20, bottom: 0 }}>
+                              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#334155" />
+                              <XAxis type="number" hide />
+                              <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+                              <Tooltip cursor={{ fill: '#334155', opacity: 0.2 }} contentStyle={{ borderRadius: '12px', border: 'none', backgroundColor: '#1e293b', color: '#f8fafc', fontWeight: 'bold' }} />
+                              <Bar dataKey="orders" fill="#6366f1" radius={[0, 4, 4, 0]} barSize={24} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        ) : <p className="text-xs text-slate-400">No table data yet.</p>}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                );
+              })()}
 
               {/* Recent Orders & Top Selling Foods */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1486,6 +1524,67 @@ export default function Admin() {
           )}
 
           {/* ==================== SETTINGS TAB ==================== */}
+          {activeTab === 'profile' && (
+            <div className="space-y-6 animate-fade-in print-hide">
+              <div>
+                <h2 className="text-2xl font-black">Admin Profile</h2>
+                <p className="text-xs text-slate-400 mt-1">Manage your account and upload a custom profile picture.</p>
+              </div>
+
+              <div className="glass-card p-6 sm:p-8 rounded-3xl max-w-3xl space-y-6 bg-white dark:bg-slate-900 border border-slate-200/40 dark:border-slate-800/40">
+                <div className="flex items-center gap-6">
+                  <img src={sessionUser?.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"} alt="Profile" className="w-24 h-24 rounded-full object-cover border-4 border-emerald-500" />
+                  <div>
+                    <h3 className="text-lg font-bold">{sessionUser?.name}</h3>
+                    <p className="text-sm text-slate-400">{sessionUser?.email}</p>
+                    <p className="text-xs font-bold text-emerald-500 mt-1 uppercase tracking-wider">{sessionUser?.role}</p>
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-200 dark:border-slate-800 pt-6 space-y-4">
+                  <h4 className="font-extrabold text-sm text-slate-400 uppercase tracking-wider">Update Profile Picture</h4>
+                  <div className="bg-emerald-500/10 text-emerald-500 p-4 rounded-xl text-xs font-semibold leading-relaxed">
+                    Select a new image below. It will be uploaded securely to your server.
+                  </div>
+                  
+                  <div className="space-y-4 mt-2">
+                    <input type="file" id="profileUpload" accept="image/*" className="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+                    
+                    <button onClick={async () => {
+                      const fileInput = document.getElementById('profileUpload');
+                      if (!fileInput.files[0]) return showToast('Please select an image first.');
+                      
+                      const btn = document.getElementById('uploadBtn');
+                      btn.innerText = 'Uploading...';
+                      btn.disabled = true;
+
+                      const formData = new FormData();
+                      formData.append('image', fileInput.files[0]);
+                      
+                      try {
+                        const res = await api.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data', 'x-restaurant-id': restaurantId }});
+                        if (res.data.success) {
+                          await api.put(`/employees/${sessionUser.id}`, { image: res.data.url }, { headers: { 'x-restaurant-id': restaurantId }});
+                          
+                          const updatedUser = { ...sessionUser, image: res.data.url };
+                          localStorage.setItem('qr_rest_session', JSON.stringify(updatedUser));
+                          
+                          showToast('Profile picture updated successfully!');
+                          setTimeout(() => window.location.reload(), 1500);
+                        }
+                      } catch (err) {
+                        showToast('Failed to upload image. Check console for details.');
+                        console.error(err);
+                        btn.innerText = 'Upload Photo';
+                        btn.disabled = false;
+                      }
+                    }} id="uploadBtn" className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-md mt-4 transition-all disabled:opacity-50">Upload Photo</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {activeTab === 'settings' && (
             <div className="space-y-6 animate-fade-in print-hide">
               <div>
@@ -1568,6 +1667,13 @@ export default function Admin() {
                           <option value="light">Light Mode Theme</option>
                           <option value="dark">Dark Mode Theme</option>
                         </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Dashboard Background Color</label>
+                        <div className="flex gap-3">
+                          <input type="color" value={setBgColor} onChange={(e) => setSetBgColor(e.target.value)} className="p-1 w-12 h-11 bg-slate-100 dark:bg-slate-950 border-none rounded-xl cursor-pointer" />
+                          <button type="button" onClick={() => setSetBgColor('')} className="px-4 py-2 bg-slate-200 dark:bg-slate-800 rounded-xl text-xs font-bold hover:bg-slate-300 dark:hover:bg-slate-700">Clear</button>
+                        </div>
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-slate-400 mb-1">Default Invoice Footer</label>

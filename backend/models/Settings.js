@@ -44,7 +44,11 @@ const settingsSchema = new mongoose.Schema({
     type: String,
     default: 'INV-'
   },
-  invoiceFooter: String
+  invoiceFooter: String,
+  backgroundColor: {
+    type: String,
+    default: ''
+  }
 });
 
 module.exports = mongoose.model('Settings', settingsSchema);

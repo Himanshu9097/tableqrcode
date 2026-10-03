@@ -11,6 +11,7 @@ connectDB();
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
 
 // Routes Mount
 app.use('/api/auth', require('./routes/auth.js'));
@@ -23,6 +24,7 @@ app.use('/api/customers', require('./routes/customers.js'));
 app.use('/api/orders', require('./routes/orders.js'));
 app.use('/api/settings', require('./routes/settings.js'));
 app.use('/api/backup', require('./routes/backup.js'));
+app.use('/api/upload', require('./routes/upload.js'));
 
 // Health check endpoint
 app.get('/api/status', (req, res) => {
